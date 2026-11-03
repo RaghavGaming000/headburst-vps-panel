@@ -1,15 +1,13 @@
-# Headburst VPS Panel
+# Headburst VPS Panel v2
 
-Custom-designed control panel to install and manage:
+Custom dark/light control panel for your VPS:
 
-- **Pterodactyl Panel**
-- **Wings** daemon
-- **Blueprint** framework
-- **Themes** (from a ZIP URL)
+- Install **Pterodactyl Panel**, **Wings**, **Blueprint**, **themes**
+- **Root console** (WebSocket shell + quick command exec)
+- **File browser** (list, open, edit, save)
+- **VPS password vault** (view / change **your** saved VPS passwords only — AES encrypted)
 
-![Node](https://img.shields.io/badge/node-%3E%3D18-brightgreen)
-
-## Quick start (on your VPS)
+## Quick start
 
 ```bash
 git clone https://github.com/RaghavGaming000/headburst-vps-panel.git
@@ -18,40 +16,38 @@ npm install
 sudo npm start
 ```
 
-Open: **http://YOUR_VPS_IP:3080**
-
-Default panel password: `headburst@vps`  
-Change with:
+Open **http://YOUR_IP:3080**  
+Default login: `headburst@vps`
 
 ```bash
-PANEL_PASS='your-strong-password' sudo -E npm start
+PANEL_PASS='strong-password' sudo -E npm start
 ```
 
 ## Features
 
-| Action | What it does |
-|--------|----------------|
-| Install Panel | PHP 8.3, Nginx, MariaDB, Redis, Panel, queue, optional SSL |
-| Install Wings | Docker + Wings binary + systemd unit |
-| Install Blueprint | Blueprint framework on existing panel |
-| Apply Theme | Download theme ZIP URL and apply / Blueprint install |
+| Tab | What you get |
+|-----|----------------|
+| Home | Host stats + system status script |
+| Install | Panel, Wings, Blueprint, Theme ZIP |
+| Console | Interactive shell + Run command |
+| Files | Browse / open / edit files |
+| Passwords | Add, view, change, delete **your** VPS passwords |
 
-## Scripts (CLI)
+Theme toggle (dark / light) is in the header.
+
+## Tests
 
 ```bash
-sudo bash scripts/install-panel.sh panel.example.com admin@example.com admin 'YourPass'
-sudo bash scripts/install-wings.sh
-sudo bash scripts/install-blueprint.sh
-sudo bash scripts/install-theme.sh https://example.com/theme.zip nebula
-bash scripts/status.sh
+npm test
 ```
 
 ## Security
 
-- Run only on trusted networks or behind a firewall
-- Change `PANEL_PASS` before production use
-- Install scripts require **root** (they install system packages)
+- Change `PANEL_PASS` before public use
+- Firewall port 3080 to trusted IPs
+- Password vault is encrypted with your panel login
+- Console runs as the user that starts Node (use `sudo` for root)
 
 ## License
 
-MIT — use at your own risk on machines you own.
+MIT
