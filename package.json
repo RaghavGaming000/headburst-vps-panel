@@ -1,16 +1,6 @@
 {
   "name": "headburst-vps-panel",
-  "version": "2.0.0",
-  "description": "Headburst VPS control panel — Pterodactyl, Wings, console, files, themes",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js",
-    "test": "node test-features.js"
-  },
-  "engines": { "node": ">=18" },
-  "dependencies": {
-    "express": "^4.21.0",
-    "express-session": "^1.18.0",
-    "ws": "^8.18.0"
-  }
+  "version": "3.0.0",
+  "description": "One-line bash installer for Pterodactyl Panel, Wings, Blueprint",
+  "private": true
 }

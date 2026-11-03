@@ -1,52 +1,37 @@
-# Headburst VPS Panel v2
+# Headburst Pterodactyl Installer
 
-Custom dark/light control panel for your VPS:
-
-- Install **Pterodactyl Panel**, **Wings**, **Blueprint**, **themes**
-- **Root console** (WebSocket shell + quick command exec)
-- **File browser** (list, open, edit, save)
-- **VPS password vault** (view / change **your** saved VPS passwords only — AES encrypted)
-
-## Quick start
+One-line installer (same style as `bash <(curl -s https://ptero.jishnu.site)`):
 
 ```bash
-git clone https://github.com/RaghavGaming000/headburst-vps-panel.git
-cd headburst-vps-panel
-npm install
-sudo npm start
+bash <(curl -fsSL https://raw.githubusercontent.com/RaghavGaming000/headburst-vps-panel/main/install.sh)
 ```
 
-Open **http://YOUR_IP:3080**  
-Default login: `headburst@vps`
+Or:
 
 ```bash
-PANEL_PASS='strong-password' sudo -E npm start
+curl -fsSL https://raw.githubusercontent.com/RaghavGaming000/headburst-vps-panel/main/install.sh | bash
 ```
 
-## Features
+## Menu
 
-| Tab | What you get |
-|-----|----------------|
-| Home | Host stats + system status script |
-| Install | Panel, Wings, Blueprint, Theme ZIP |
-| Console | Interactive shell + Run command |
-| Files | Browse / open / edit files |
-| Passwords | Add, view, change, delete **your** VPS passwords |
+1. **Pterodactyl Panel** — Nginx, PHP 8.3, MariaDB, Redis, SSL  
+2. **Wings** — Docker + daemon  
+3. **Panel + Wings** — both on one machine  
+4. **Blueprint** — theme/extension framework  
+5. **Status check**  
+6. **Uninstall** — wipe panel/wings/data  
 
-Theme toggle (dark / light) is in the header.
+## Requirements
 
-## Tests
+- Ubuntu 22.04+ (or Debian)  
+- Root (`sudo`)  
+- For SSL: domain DNS A record pointing to the VPS  
 
-```bash
-npm test
-```
+## After Wings install
 
-## Security
-
-- Change `PANEL_PASS` before public use
-- Firewall port 3080 to trusted IPs
-- Password vault is encrypted with your panel login
-- Console runs as the user that starts Node (use `sudo` for root)
+1. Create a **node** in the Panel  
+2. Copy **Configuration** YAML → `/etc/pterodactyl/config.yml`  
+3. `systemctl start wings`  
 
 ## License
 
