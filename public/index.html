@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Headburst VPS Panel</title>
+  <style>
+    :root {
+      --bg: #07090f;
+      --card: #0f1420;
+      --line: #1e293b;
+      --text: #e8eefc;
+      --muted: #8b9bb8;
+      --cyan: #22d3ee;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; min-height: 100vh;
+      font-family: Inter, "Segoe UI", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(900px 500px at 10% -10%, rgba(34,211,238,0.12), transparent 50%),
+        radial-gradient(700px 400px at 90% 100%, rgba(167,139,250,0.1), transparent 45%),
+        var(--bg);
+    }
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 28px 18px 48px; }
+    header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px; flex-wrap: wrap; gap: 12px; }
+    h1 { margin: 0; font-size: 26px; letter-spacing: 0.04em; }
+    h1 span { color: var(--cyan); }
+    .sub { color: var(--muted); margin-top: 6px; font-size: 14px; }
+    .pill { border: 1px solid var(--line); border-radius: 999px; padding: 6px 12px; color: var(--muted); font-size: 12px; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 20px; }
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), transparent), var(--card);
+      border: 1px solid var(--line); border-radius: 18px; padding: 18px;
+      transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .card:hover { transform: translateY(-2px); border-color: #334155; box-shadow: 0 12px 40px rgba(0,0,0,0.35); }
+    .card h3 { margin: 0 0 8px; font-size: 17px; }
+    .card p { margin: 0 0 14px; color: var(--muted); font-size: 13px; line-height: 1.45; min-height: 40px; }
+    .tag { display: inline-block; font-size: 11px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--cyan); margin-bottom: 10px; }
+    button { appearance: none; border: none; cursor: pointer; font: inherit; font-weight: 600; border-radius: 999px; padding: 10px 16px; background: linear-gradient(135deg, #06b6d4, #6366f1); color: white; }
+    button.secondary { background: #1e293b; border: 1px solid var(--line); }
+    button:disabled { opacity: 0.55; cursor: wait; }
+    input { width: 100%; background: #0a0e18; border: 1px solid var(--line); color: var(--text); border-radius: 12px; padding: 10px 12px; font: inherit; margin-bottom: 8px; }
+    input:focus { outline: none; border-color: #475569; box-shadow: 0 0 0 3px rgba(34,211,238,0.12); }
+    .log { background: #05070c; border: 1px solid var(--line); border-radius: 16px; padding: 14px; min-height: 180px; max-height: 360px; overflow: auto; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 12px; white-space: pre-wrap; color: #cbd5e1; }
+    #login { max-width: 400px; margin: 80px auto; padding: 24px; background: var(--card); border: 1px solid var(--line); border-radius: 20px; }
+    .hidden { display: none; }
+    .err { color: #f87171; font-size: 13px; min-height: 18px; }
+    .modal-bg { position: fixed; inset: 0; background: rgba(0,0,0,0.55); display: none; align-items: center; justify-content: center; padding: 16px; z-index: 20; }
+    .modal-bg.show { display: flex; }
+    .modal { width: min(480px, 100%); background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 18px; }
+    .row { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
+    .row button { flex: 1; }
+  </style>
+</head>
+<body>
+  <div id="login">
+    <h1>Headburst <span>VPS</span></h1>
+    <p class="sub">Secure control panel for installs</p>
+    <input id="pass" type="password" placeholder="Panel password" />
+    <button id="loginBtn" style="width:100%;margin-top:8px">Enter</button>
+    <p class="err" id="loginErr"></p>
+  </div>
+  <div id="app" class="hidden">
+    <div class="wrap">
+      <header>
+        <div>
+          <h1>HEADBURST <span>VPS PANEL</span></h1>
+          <div class="sub">Pterodactyl · Wings · Themes · Blueprint</div>
+        </div>
+        <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span class="pill" id="hostPill">localhost</span>
+          <button class="secondary" id="statusBtn">Refresh status</button>
+          <button class="secondary" id="logoutBtn">Logout</button>
+        </div>
+      </header>
+      <div class="grid">
+        <div class="card">
+          <div class="tag">Core</div>
+          <h3>Install Pterodactyl Panel</h3>
+          <p>Nginx, PHP, MariaDB, Redis, queue worker, optional SSL.</p>
+          <button id="btnPanel">Install Panel</button>
+        </div>
+        <div class="card">
+          <div class="tag">Daemon</div>
+          <h3>Install Wings</h3>
+          <p>Docker + Wings binary + systemd service for game nodes.</p>
+          <button id="btnWings">Install Wings</button>
+        </div>
+        <div class="card">
+          <div class="tag">Framework</div>
+          <h3>Install Blueprint</h3>
+          <p>Blueprint framework for Pterodactyl extensions and themes.</p>
+          <button id="btnBlueprint">Install Blueprint</button>
+        </div>
+        <div class="card">
+          <div class="tag">Style</div>
+          <h3>Download / Apply Theme</h3>
+          <p>Install a theme from a direct ZIP URL (Nebula or custom).</p>
+          <button id="btnTheme">Apply Theme</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3 style="margin-top:0">Live log</h3>
+        <div class="log" id="log">Ready. Choose an action above.</div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-bg" id="modal">
+    <div class="modal">
+      <h3 id="modalTitle">Configure</h3>
+      <div id="modalFields"></div>
+      <div class="row">
+        <button class="secondary" id="modalCancel">Cancel</button>
+        <button id="modalOk">Run</button>
+      </div>
+    </div>
+  </div>
+  <script>
+    const $ = (id) => document.getElementById(id);
+    let pollTimer = null;
+    async function api(path, opts = {}) {
+      const r = await fetch(path, {
+        credentials: 'include',
+        headers: opts.body ? { 'Content-Type': 'application/json' } : undefined,
+        ...opts,
+        body: opts.body ? JSON.stringify(opts.body) : undefined,
+      });
+      const data = await r.json().catch(() => ({}));
+      if (!r.ok) throw new Error(data.error || r.statusText);
+      return data;
+    }
+    function log(text) { $('log').textContent = text || ''; $('log').scrollTop = $('log').scrollHeight; }
+    async function boot() { try { const me = await api('/api/me'); if (me.ok) showApp(); } catch {} }
+    function showApp() {
+      $('login').classList.add('hidden');
+      $('app').classList.remove('hidden');
+      $('hostPill').textContent = location.host;
+      refreshStatus();
+    }
+    $('loginBtn').onclick = async () => {
+      $('loginErr').textContent = '';
+      try { await api('/api/login', { method: 'POST', body: { password: $('pass').value } }); showApp(); }
+      catch (e) { $('loginErr').textContent = e.message; }
+    };
+    $('logoutBtn').onclick = async () => { await api('/api/logout', { method: 'POST', body: {} }); location.reload(); };
+    async function refreshStatus() {
+      try { const s = await api('/api/status'); log(s.log || JSON.stringify(s)); }
+      catch (e) { log('Status error: ' + e.message); }
+    }
+    $('statusBtn').onclick = refreshStatus;
+    function openModal(title, fields, onOk) {
+      $('modalTitle').textContent = title;
+      const box = $('modalFields'); box.innerHTML = '';
+      fields.forEach((f) => {
+        const inp = document.createElement('input');
+        inp.id = 'f_' + f.key; inp.placeholder = f.label;
+        if (f.value) inp.value = f.value; if (f.type) inp.type = f.type;
+        box.appendChild(inp);
+      });
+      $('modal').classList.add('show');
+      $('modalCancel').onclick = () => $('modal').classList.remove('show');
+      $('modalOk').onclick = async () => {
+        const data = {};
+        fields.forEach((f) => { data[f.key] = $('f_' + f.key).value; });
+        $('modal').classList.remove('show');
+        await onOk(data);
+      };
+    }
+    async function track(jobId) {
+      log('Job started: ' + jobId + '\n');
+      clearInterval(pollTimer);
+      pollTimer = setInterval(async () => {
+        try {
+          const j = await api('/api/jobs/' + jobId);
+          log(j.log || '(no output yet)');
+          if (j.status === 'done' || j.status === 'error') {
+            clearInterval(pollTimer);
+            log((j.log || '') + '\n\n--- ' + j.status.toUpperCase() + ' (code ' + (j.code ?? '?') + ') ---');
+          }
+        } catch (e) { clearInterval(pollTimer); log('Poll error: ' + e.message); }
+      }, 1000);
+    }
+    $('btnPanel').onclick = () => openModal('Install Pterodactyl Panel', [
+      { key: 'domain', label: 'Domain (panel.example.com)', value: 'panel.headburstsmp.fun' },
+      { key: 'email', label: 'Admin email', value: 'admin@headburstsmp.fun' },
+      { key: 'username', label: 'Admin username', value: 'admin' },
+      { key: 'password', label: 'Admin password', value: 'admin@434', type: 'password' },
+    ], async (data) => { const r = await api('/api/install/panel', { method: 'POST', body: data }); track(r.jobId); });
+    $('btnWings').onclick = async () => { const r = await api('/api/install/wings', { method: 'POST', body: {} }); track(r.jobId); };
+    $('btnBlueprint').onclick = async () => { const r = await api('/api/install/blueprint', { method: 'POST', body: {} }); track(r.jobId); };
+    $('btnTheme').onclick = () => openModal('Apply Theme from ZIP URL', [
+      { key: 'url', label: 'Theme ZIP URL (direct download)' },
+      { key: 'name', label: 'Theme name', value: 'nebula' },
+    ], async (data) => { const r = await api('/api/install/theme', { method: 'POST', body: data }); track(r.jobId); });
+    boot();
+  </script>
+</body>
+</html>
